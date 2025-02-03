@@ -1,11 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>ระบบบันทึกค่าใช้จ่าย</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="p-6 bg-gray-100">
+    <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4">บันทึกค่าใช้จ่าย</h2>
+        <input id="item" type="text" placeholder="ชื่อรายการ" class="w-full p-2 border rounded mb-2">
+        <input id="amount" type="number" placeholder="จำนวนเงิน" class="w-full p-2 border rounded mb-2">
+        <input id="category" type="text" placeholder="หมวดหมู่" class="w-full p-2 border rounded mb-2">
+        <input id="date" type="date" class="w-full p-2 border rounded mb-2">
+        <button onclick="addExpense()" class="w-full bg-blue-500 text-white p-2 rounded">เพิ่มรายการ</button>
+    </div>
     
+    <div class="max-w-xl mx-auto mt-6">
+        <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="p-2">ชื่อรายการ</th>
+                    <th class="p-2">จำนวนเงิน</th>
+                    <th class="p-2">หมวดหมู่</th>
+                    <th class="p-2">วันที่</th>
+                </tr>
+            </thead>
+            <tbody id="expenseTable"></tbody>
+        </table>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
