@@ -12,7 +12,13 @@
         <h2 class="text-xl font-bold mb-4">บันทึกค่าใช้จ่าย</h2>
         <input id="item" type="text" placeholder="ชื่อรายการ" class="w-full p-2 border rounded mb-2">
         <input id="amount" type="number" placeholder="จำนวนเงิน" class="w-full p-2 border rounded mb-2">
-        <input id="category" type="text" placeholder="หมวดหมู่" class="w-full p-2 border rounded mb-2">
+        <select id="category" class="w-full p-2 border rounded mb-2">
+            <option value="ค่าอาหาร">ค่าอาหาร</option>
+            <option value="ค่าเดินทาง">ค่าเดินทาง</option>
+            <option value="ค่าสุขภาพ">ค่าสุขภาพ</option>
+            <option value="ค่าความบันเทิง">ค่าความบันเทิง</option>
+            <option value="ค่าใช้จ่ายทั่วไป">ค่าใช้จ่ายทั่วไป</option>
+        </select>
         <input id="date" type="date" class="w-full p-2 border rounded mb-2">
         <button onclick="addExpense()" class="w-full bg-blue-500 text-white p-2 rounded">เพิ่มรายการ</button>
     </div>
@@ -30,6 +36,28 @@
             <tbody id="expenseTable"></tbody>
         </table>
     </div>
-    <script src="script.js"></script>
+    <script>
+        let expenses = JSON.parse(localStorage.getItem('expanses')) || [];
+
+        function addExpense() {
+            const item = document.getElementById("item").value.trim();
+            const amount = document.getElementById("amount").value.trim();
+            const category = document.getElementById("category").value;
+            const date = document.getElementById("date").value;
+
+            if (!item || !amount || !category || !date) {
+                alert("กรุณากรอกข้อมูลให้ครบ!");
+                return;
+            }
+
+            const expanses = {item, amount, category, date};
+            expanses.push(expense);
+            localStorage.setItem('expanses',JSON.stringify(expanses));
+
+            renderExpenses();
+            
+            
+        }
+    </script>
 </body>
 </html>
