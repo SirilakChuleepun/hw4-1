@@ -38,6 +38,15 @@
                 <tbody id="expenseTable"></tbody>
             </table>
         </div>
+
+        <div class="max-w-xl mx-auto mt-6 bg-white p-6 rounded-lg shadow-md">
+            <h3 class="text-lg font-bold mb-4">สรุปค่าใช้จ่าย</h3>
+            <button onclick="showDailySummary()" class="w-full bg-green-500 text-white p-2 rounded mb-2">ดูสรุปรายวัน</button>
+            <button onclick="showMonthlySummary()" class="w-full bg-purple-500 text-white p-2 rounded mb-2">ดูสรุปรายเดือน</button>
+            <div id="summaryResult" class="mt-4 text-lg font-semibold"></div>
+        </div>
+
+        
         <script>
         let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
@@ -103,7 +112,7 @@
                 .filter(expense => expense.date.startsWith(currentMonth))
                 .reduce((total, expense) => total + expense.amount, 0);
         }
-        
+
         function updateSummary() {
             const today = new Date().toISOString().split("T")[0];
             const dailyTotal = getExpensesByDate(today).reduce((sum, exp) => sum + exp.amount, 0);
@@ -125,6 +134,19 @@
             renderExpenses();
             updateSummary();
         });
+
+        function showDailySummary() {
+            const today = new Date().toISOString().split("T")[0];
+            const dailyTotal = getExpensesByDate(today).reduce((sum,exp) => sum + exp.amount, 0);
+            document.getElementById("summaryResult").innerText = `รวมค่าใช้จ่ายวันนี้:  ${dailyTotal} บาท`;
+
+        }
+
+        function showMonthlySummary() {
+            const monthlyTotal = generateMonthlyReport();
+            document.getElementById("summaryResult").innerText = `รวมค่าใช้จ่ายเดือนนี้: ${monthlyTotal} บาท`;
+            
+        }
     </script>
     </body>
 </html>
