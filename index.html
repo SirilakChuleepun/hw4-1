@@ -1,43 +1,45 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบบันทึกค่าใช้จ่าย</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body class="p-6 bg-gray-100">
-    <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-xl font-bold mb-4">บันทึกค่าใช้จ่าย</h2>
-        <input id="item" type="text" placeholder="ชื่อรายการ" class="w-full p-2 border rounded mb-2">
-        <input id="amount" type="number" placeholder="จำนวนเงิน" class="w-full p-2 border rounded mb-2">
-        <select id="category" class="w-full p-2 border rounded mb-2">
-            <option value="ค่าอาหาร">ค่าอาหาร</option>
-            <option value="ค่าเดินทาง">ค่าเดินทาง</option>
-            <option value="ค่าสุขภาพ">ค่าสุขภาพ</option>
-            <option value="ค่าความบันเทิง">ค่าความบันเทิง</option>
-            <option value="ค่าใช้จ่ายทั่วไป">ค่าใช้จ่ายทั่วไป</option>
-        </select>
-        <input id="date" type="date" class="w-full p-2 border rounded mb-2">
-        <button onclick="addExpense()" class="w-full bg-blue-500 text-white p-2 rounded">เพิ่มรายการ</button>
-    </div>
-    
-    <div class="max-w-xl mx-auto mt-6">
-        <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
-            <thead class="bg-gray-200">
-                <tr>
-                    <th class="p-2">ชื่อรายการ</th>
-                    <th class="p-2">จำนวนเงิน</th>
-                    <th class="p-2">หมวดหมู่</th>
-                    <th class="p-2">วันที่</th>
-                </tr>
-            </thead>
-            <tbody id="expenseTable"></tbody>
-        </table>
-    </div>
-    <script>
-        let expenses = JSON.parse(localStorage.getItem('expanses')) || [];
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ระบบบันทึกค่าใช้จ่าย</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="p-6 bg-gray-100">
+        <div class="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold mb-4">บันทึกค่าใช้จ่าย</h2>
+            <input id="item" type="text" placeholder="ชื่อรายการ"
+                class="w-full p-2 border rounded mb-2">
+            <input id="amount" type="number" placeholder="จำนวนเงิน"
+                class="w-full p-2 border rounded mb-2">
+            <select id="category" class="w-full p-2 border rounded mb-2">
+                <option value="ค่าอาหาร">ค่าอาหาร</option>
+                <option value="ค่าเดินทาง">ค่าเดินทาง</option>
+                <option value="ค่าสุขภาพ">ค่าสุขภาพ</option>
+                <option value="ค่าความบันเทิง">ค่าความบันเทิง</option>
+                <option value="ค่าใช้จ่ายทั่วไป">ค่าใช้จ่ายทั่วไป</option>
+            </select>
+            <input id="date" type="date" class="w-full p-2 border rounded mb-2">
+            <button onclick="addExpense()"
+                class="w-full bg-blue-500 text-white p-2 rounded">เพิ่มรายการ</button>
+        </div>
+
+        <div class="max-w-xl mx-auto mt-6">
+            <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-2">ชื่อรายการ</th>
+                        <th class="p-2">จำนวนเงิน</th>
+                        <th class="p-2">หมวดหมู่</th>
+                        <th class="p-2">วันที่</th>
+                    </tr>
+                </thead>
+                <tbody id="expenseTable"></tbody>
+            </table>
+        </div>
+        <script>
+        let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 
         function addExpense() {
             const item = document.getElementById("item").value.trim();
@@ -50,14 +52,79 @@
                 return;
             }
 
-            const expanses = {item, amount, category, date};
-            expanses.push(expense);
-            localStorage.setItem('expanses',JSON.stringify(expanses));
+            const expense = {item, amount: parseFloat(amount), category, date};
+            expenses.push(expense);
+            localStorage.setItem('expenses',JSON.stringify(expenses));
 
             renderExpenses();
+            updateSummary();
+            clearForm();
             
             
         }
+
+        function renderExpenses() {
+            const table = document.getElementById("expenseTable");
+            table.innerHTML = '';
+
+            expenses.forEach((expense, index) => {
+            table.innerHTML += `
+                    <tr class="border-b">
+                        <td class="p-2">${expense.item}</td>
+                        <td class="p-2">${expense.amount}</td>
+                        <td class="p-2">${expense.category}</td>
+                        <td class="p-2">${expense.date}</td>
+                        <td class="p-2"><button onclick="deleteExpense(${index})"class="text-red-500">ลบ</button></td>
+                   </tr>
+                `;
+            });
+        }
+
+        function deleteExpense(index) {
+            expenses.splice(index, 1);
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+            renderExpenses();
+            updateSummary();
+        }
+
+        function getExpensesByDate(date) {
+            return expenses.filter(expense => expense.date === date);
+        }
+
+        function calculateTotalByCategory(category) {
+            return expenses
+                .filter(expense => expense.category === category)
+                .reduce((total, expense) => total + expense.amount, 0);
+        }
+
+        function generateMonthlyReport() {
+            const currentMonth = new Date().toISOString().slice(0, 7); // ปี-เดือน
+            return expenses
+                .filter(expense => expense.date.startsWith(currentMonth))
+                .reduce((total, expense) => total + expense.amount, 0);
+        }
+        
+        function updateSummary() {
+            const today = new Date().toISOString().split("T")[0];
+            const dailyTotal = getExpensesByDate(today).reduce((sum, exp) => sum + exp.amount, 0);
+            const monthlyTotal = generateMonthlyReport();
+
+            document.getElementById("dailyTotal").innerText = `รวมค่าใช้จ่ายรายวัน: ${dailyTotal}`;
+            document.getElementById("monthlyTotal").innerText = `รวมค่าใช้จ่ายรายเดือน: ${monthlyTotal}`;
+
+        }
+
+        function clearForm() {
+            document.getElementById("item").value = '';
+            document.getElementById("amount").value = '';
+            document.getElementById("date").value = '';
+            
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderExpenses();
+            updateSummary();
+        });
     </script>
-</body>
+    </body>
 </html>
